@@ -134,11 +134,7 @@ export const RouteDetail = ({ routeId, onBack }: RouteDetailProps) => {
               {waypoints.map((waypoint, index) => (
                 <Marker key={waypoint.id} position={[waypoint.latitude, waypoint.longitude]}>
                   <Popup>
-                    <div className="text-sm">
-                      <strong>Waypoint {waypoint.order_index}</strong>
-                      <br />
-                      {waypoint.latitude.toFixed(6)}, {waypoint.longitude.toFixed(6)}
-                    </div>
+                    Waypoint {waypoint.order_index}: {waypoint.latitude.toFixed(6)}, {waypoint.longitude.toFixed(6)}
                   </Popup>
                 </Marker>
               ))}
