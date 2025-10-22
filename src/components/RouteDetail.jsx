@@ -9,35 +9,16 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Fix for default marker icons in react-leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-interface Route {
-  id: string;
-  name: string;
-  total_distance: number;
-  created_at: string;
-}
-
-interface Waypoint {
-  id: string;
-  latitude: number;
-  longitude: number;
-  order_index: number;
-}
-
-interface RouteDetailProps {
-  routeId: string;
-  onBack: () => void;
-}
-
-export const RouteDetail = ({ routeId, onBack }: RouteDetailProps) => {
-  const [route, setRoute] = useState<Route | null>(null);
-  const [waypoints, setWaypoints] = useState<Waypoint[]>([]);
+export const RouteDetail = ({ routeId, onBack }) => {
+  const [route, setRoute] = useState(null);
+  const [waypoints, setWaypoints] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -64,7 +45,7 @@ export const RouteDetail = ({ routeId, onBack }: RouteDetailProps) => {
 
       setRoute(routeData);
       setWaypoints(waypointsData);
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to fetch route details");
     } finally {
       setIsLoading(false);
@@ -95,8 +76,8 @@ export const RouteDetail = ({ routeId, onBack }: RouteDetailProps) => {
     );
   }
 
-  const center: [number, number] = [waypoints[0].latitude, waypoints[0].longitude];
-  const positions: [number, number][] = waypoints.map((wp) => [wp.latitude, wp.longitude]);
+  const center = [waypoints[0].latitude, waypoints[0].longitude];
+  const positions = waypoints.map((wp) => [wp.latitude, wp.longitude]);
 
   return (
     <div className="space-y-4 animate-slide-up">
@@ -131,7 +112,7 @@ export const RouteDetail = ({ routeId, onBack }: RouteDetailProps) => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              {waypoints.map((waypoint, index) => (
+              {waypoints.map((waypoint) => (
                 <Marker key={waypoint.id} position={[waypoint.latitude, waypoint.longitude]}>
                   <Popup>
                     Waypoint {waypoint.order_index}: {waypoint.latitude.toFixed(6)}, {waypoint.longitude.toFixed(6)}

@@ -5,21 +5,8 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-interface Route {
-  id: string;
-  name: string;
-  total_distance: number;
-  created_at: string;
-  waypoint_count?: number;
-}
-
-interface RouteListProps {
-  onRouteSelect: (routeId: string) => void;
-  refreshTrigger: number;
-}
-
-export const RouteList = ({ onRouteSelect, refreshTrigger }: RouteListProps) => {
-  const [routes, setRoutes] = useState<Route[]>([]);
+export const RouteList = ({ onRouteSelect, refreshTrigger }) => {
+  const [routes, setRoutes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -50,7 +37,7 @@ export const RouteList = ({ onRouteSelect, refreshTrigger }: RouteListProps) => 
       );
 
       setRoutes(routesWithCounts);
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to fetch routes");
     } finally {
       setIsLoading(false);

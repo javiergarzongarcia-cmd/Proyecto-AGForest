@@ -7,18 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-interface Waypoint {
-  latitude: string;
-  longitude: string;
-  order: number;
-}
-
-interface RouteFormProps {
-  onRouteCreated: () => void;
-}
-
 // Haversine formula to calculate distance between two points
-const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
   const R = 6371; // Earth's radius in km
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -30,7 +20,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 };
 
-const calculateTotalDistance = (waypoints: Waypoint[]): number => {
+const calculateTotalDistance = (waypoints) => {
   if (waypoints.length < 2) return 0;
   
   let total = 0;
@@ -47,9 +37,9 @@ const calculateTotalDistance = (waypoints: Waypoint[]): number => {
   return total;
 };
 
-export const RouteForm = ({ onRouteCreated }: RouteFormProps) => {
+export const RouteForm = ({ onRouteCreated }) => {
   const [routeName, setRouteName] = useState("");
-  const [waypoints, setWaypoints] = useState<Waypoint[]>([
+  const [waypoints, setWaypoints] = useState([
     { latitude: "", longitude: "", order: 1 },
     { latitude: "", longitude: "", order: 2 },
   ]);
@@ -59,20 +49,20 @@ export const RouteForm = ({ onRouteCreated }: RouteFormProps) => {
     setWaypoints([...waypoints, { latitude: "", longitude: "", order: waypoints.length + 1 }]);
   };
 
-  const removeWaypoint = (index: number) => {
+  const removeWaypoint = (index) => {
     if (waypoints.length > 2) {
       const newWaypoints = waypoints.filter((_, i) => i !== index);
       setWaypoints(newWaypoints.map((wp, i) => ({ ...wp, order: i + 1 })));
     }
   };
 
-  const updateWaypoint = (index: number, field: "latitude" | "longitude", value: string) => {
+  const updateWaypoint = (index, field, value) => {
     const newWaypoints = [...waypoints];
     newWaypoints[index][field] = value;
     setWaypoints(newWaypoints);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!routeName.trim()) {
@@ -125,7 +115,7 @@ export const RouteForm = ({ onRouteCreated }: RouteFormProps) => {
         { latitude: "", longitude: "", order: 2 },
       ]);
       onRouteCreated();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to create route");
     } finally {
       setIsSubmitting(false);
