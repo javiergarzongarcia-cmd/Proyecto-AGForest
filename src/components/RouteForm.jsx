@@ -70,6 +70,13 @@ export const RouteForm = ({ onRouteCreated }) => {
       return;
     }
 
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      toast.error("You must be logged in to create routes");
+      return;
+    }
+
     const validWaypoints = waypoints.filter(
       wp => wp.latitude.trim() && wp.longitude.trim()
     );
@@ -89,6 +96,7 @@ export const RouteForm = ({ onRouteCreated }) => {
         .insert({
           name: routeName,
           total_distance: totalDistance,
+          user_id: user.id,
         })
         .select()
         .single();
