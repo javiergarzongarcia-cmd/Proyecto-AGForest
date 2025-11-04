@@ -15,27 +15,18 @@ const Index = () => {
   const [selectedRouteId, setSelectedRouteId] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
+  // Authentication is optional - app works without login
   useEffect(() => {
-    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
-        if (!session) {
-          navigate("/auth");
-        }
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
-      if (!session) {
-        navigate("/auth");
-      }
     });
 
     return () => subscription.unsubscribe();
@@ -63,20 +54,18 @@ const Index = () => {
     }
   };
 
-  if (!user) {
-    return null; // Show nothing while checking auth
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8 animate-fade-in">
-          <div className="flex justify-end mb-4">
-            <Button variant="outline" onClick={handleLogout} className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
+          {user && (
+            <div className="flex justify-end mb-4">
+              <Button variant="outline" onClick={handleLogout} className="gap-2">
+                <LogOut className="h-4 w-4" />
+                Sign Out
+              </Button>
+            </div>
+          )}
           <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
             Route Planner
           </h1>
